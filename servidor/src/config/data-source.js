@@ -1,7 +1,9 @@
 import "reflect-metadata";
 import "dotenv/config";
 import { DataSource } from "typeorm";
+import { Categoria } from "../entities/Categoria.js";
 import { Producto } from "../entities/Producto.js";
+import { Usuario } from "../entities/Usuario.js";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -11,6 +13,6 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "postgres",
   database: process.env.DB_NAME || "tienda",
   synchronize: true, // ⚠️ true SOLO en desarrollo/aprendizaje
-  logging: true,
-  entities: [Producto], // array explícito, sin globs
+  logging: false,
+  entities: [Categoria, Producto, Usuario], // array explícito, sin globs
 });

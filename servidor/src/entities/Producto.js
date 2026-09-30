@@ -1,8 +1,9 @@
 import { EntitySchema } from "typeorm";
+import { Categoria } from "./Categoria.js";
 
 export const Producto = new EntitySchema({
-  name: "Producto",         // nombre interno en TypeORM
-  tableName: "productos",   // nombre real de la tabla en Postgres
+  name: "Producto",
+  tableName: "productos",
   columns: {
     id: {
       primary: true,
@@ -17,11 +18,11 @@ export const Producto = new EntitySchema({
     imagen: {
       type: "varchar",
       length: 255,
-      nullable: true,       // puede no tener imagen al inicio
+      nullable: true, // puede no tener imagen al inicio
     },
     descripcion: {
       type: "text",
-      nullable: true,       // es opcional
+      nullable: true, // es opcional
     },
     precioProveedor: {
       type: "decimal",
@@ -35,9 +36,40 @@ export const Producto = new EntitySchema({
       scale: 2,
       nullable: false,
     },
+    // Referencia a la categoría del Módulo de Categorías (obligatoria).
+    categoriaId: {
+      type: "int",
+      nullable: false,
+    },
+    activo: {
+      type: "boolean",
+      default: true,
+    },
+    eliminadoEn: {
+      type: "timestamp",
+      nullable: true,
+    },
     creadoEn: {
       type: "timestamp",
-      createDate: true,     // se rellena solo al crear
+      createDate: true, // se rellena solo al crear
+    },
+    actualizadoEn: {
+      type: "timestamp",
+      updateDate: true,
+    },
+  },
+  relations: {
+    categoria: {
+      type: "many-to-one",
+      target: Categoria,
+      // `eager` evita tener que declarar el join en cada consulta del repositorio.
+      eager: true,
+      nullable: false,
+      onDelete: "RESTRICT",
+      joinColumn: {
+        name: "categoriaId",
+        referencedColumnName: "id",
+      },
     },
   },
 });

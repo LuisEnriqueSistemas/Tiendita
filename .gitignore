@@ -7,4 +7,8 @@ requirements/
 .env
 .env.local
 .env.local.example
+# Reportes de cobertura de pruebas
+coverage/
+# Imágenes de productos almacenadas en disco
+servidor/uploads/
 # otras dependecias

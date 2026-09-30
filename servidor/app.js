@@ -1,18 +1,32 @@
-import express from 'express';
-import cors from 'cors';
-import multer  from 'multer';
+import cors from "cors";
+import express from "express";
+import { config } from "./src/config/config.js";
+import { manejarErrores, rutaNoEncontrada } from "./src/middlewares/error.middleware.js";
+import { crearRoutes } from "./src/routes/index.js";
 
-const app = express();
+/**
+ * Construye la aplicación Express.
+ * @param {{ contenedor: ReturnType<import("./src/utils/container.util.js").crearContenedor> }} opciones
+ */
+export const crearApp = ({ contenedor }) => {
+  const app = express();
 
-// middlewares globales
-app.use(cors());
-app.use(express.json()); // para leer req.body en JSON
+  // Imágenes de productos servidas desde disco.
+  app.use(config.uploads.publicPath, express.static(config.uploads.dir));
 
-// rutas de prueba
-/*app.get("/dame", (req, res) => {
-  res.send("si da");
-});*/
+  // Middlewares globales
+  app.use(cors({ origin: config.server.clientUrl, credentials: false }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-// (más adelante) app.use('/api/productos', productosRoutes);
+  // Rutas de la API
+  app.use("/api", crearRoutes(contenedor));
 
-export default app;
+  // Manejo centralizado de errores
+  app.use(rutaNoEncontrada);
+  app.use(manejarErrores);
+
+  return app;
+};
+
+export default crearApp;
